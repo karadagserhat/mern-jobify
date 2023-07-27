@@ -1,20 +1,19 @@
+import { lazy, Suspense } from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-import {
-  HomeLayout,
-  Landing,
-  Register,
-  Login,
-  DashboardLayout,
-  Error,
-  AddJob,
-  Stats,
-  AllJobs,
-  Profile,
-  Admin,
-  EditJob,
-} from './pages/index';
+import { Error, Admin } from './pages/index';
+
+const HomeLayout = lazy(() => import('./pages/HomeLayout'));
+const Landing = lazy(() => import('./pages/Landing'));
+const Register = lazy(() => import('./pages/Register'));
+const Login = lazy(() => import('./pages/Login'));
+const DashboardLayout = lazy(() => import('./pages/DashboardLayout'));
+const AddJob = lazy(() => import('./pages/AddJob'));
+const Stats = lazy(() => import('./pages/Stats'));
+const AllJobs = lazy(() => import('./pages/AllJobs'));
+const Profile = lazy(() => import('./pages/Profile'));
+const EditJob = lazy(() => import('./pages/EditJob'));
 
 import { action as registerAction } from './pages/Register';
 import { action as loginAction } from './pages/Login';
@@ -28,6 +27,7 @@ import { loader as adminLoader } from './pages/Admin';
 import { action as profileAction } from './pages/Profile';
 import { loader as statsLoader } from './pages/Stats';
 import ErrorElement from './components/ErrorElement';
+import { Loading } from './components';
 
 const checkDefaultTheme = () => {
   const isDarkTheme = localStorage.getItem('darkTheme') === 'true';
@@ -122,7 +122,9 @@ const router = createBrowserRouter([
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
+      <Suspense fallback={<Loading />}>
+        <RouterProvider router={router} />
+      </Suspense>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>
   );
